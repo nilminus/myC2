@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TeamServer.Models;
 using Xunit;
 
@@ -27,7 +28,7 @@ namespace xunitTests
         }
 
         [Fact]
-        public void NickInUse ()
+        public void NickInUse()
         {
             var request = new ClientAuthenticationRequest { Nick = "nilminus", Password = "a" };
             TeamServer.Controllers.ClientController.ClientLogin(request);
@@ -45,6 +46,18 @@ namespace xunitTests
 
             Assert.Equal(ClientAuthenticationResult.AuthResult.InvalidRequest, result.Result);
             Assert.Null(result.Token);
+        }
+
+        [Fact]
+        public void GetConnectedClients()
+        {
+            var request = new ClientAuthenticationRequest { Nick = "nilminus", Password = "a" };
+            TeamServer.Controllers.ClientController.ClientLogin(request);
+            request = new ClientAuthenticationRequest { Nick = "stintixis", Password = "a" };
+            TeamServer.Controllers.ClientController.ClientLogin(request);
+
+            var result = TeamServer.Controllers.ClientController.GetConnectedClients();
+            Assert.Equal(new List<string> { "nilminus", "stintixis" }, result);
         }
     }
 }
